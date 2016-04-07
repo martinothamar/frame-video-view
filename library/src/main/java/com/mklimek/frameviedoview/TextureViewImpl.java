@@ -13,6 +13,8 @@ import android.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public @TargetApi(14)
 class TextureViewImpl extends TextureView implements
         Impl,
@@ -22,6 +24,7 @@ class TextureViewImpl extends TextureView implements
 
     private View placeholderView;
     private Uri videoUri;
+    private Map<String, String> headers;
     private FrameVideoViewListener listener;
 
     private Surface surface;
@@ -39,9 +42,10 @@ class TextureViewImpl extends TextureView implements
     }
 
     @Override
-    public void init(View placeholderView, Uri videoUri) {
+    public void init(View placeholderView, Uri videoUri, Map<String, String> headers) {
         this.placeholderView = placeholderView;
         this.videoUri = videoUri;
+        this.headers = headers;
         setSurfaceTextureListener(this);
     }
 
@@ -69,7 +73,11 @@ class TextureViewImpl extends TextureView implements
     private void prepare() {
         try {
             mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(getContext(), videoUri);
+            if (headers != null) {
+                mediaPlayer.setDataSource(getContext(), videoUri, headers);
+            } else {
+                mediaPlayer.setDataSource(getContext(), videoUri);
+            }
             mediaPlayer.setSurface(surface);
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnInfoListener(new InfoListener(placeholderView));

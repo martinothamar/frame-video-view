@@ -15,6 +15,8 @@ import android.widget.Toast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public class FrameVideoView extends FrameLayout {
 
     private Impl impl;
@@ -45,7 +47,7 @@ public class FrameVideoView extends FrameLayout {
         if(Build.VERSION.SDK_INT >= 14){
             implType = ImplType.TEXTURE_VIEW;
             final TextureViewImpl textureVideoImpl = new TextureViewImpl(context);
-            textureVideoImpl.init(placeholderView, videoUri);
+            textureVideoImpl.init(placeholderView, videoUri, null);
             addView(textureVideoImpl);
             return textureVideoImpl;
         } else{
@@ -60,13 +62,13 @@ public class FrameVideoView extends FrameLayout {
         if(Build.VERSION.SDK_INT >= 14){
             implType = ImplType.TEXTURE_VIEW;
             final TextureViewImpl textureVideoImpl = new TextureViewImpl(context, attrs);
-            textureVideoImpl.init(placeholderView, videoUri);
+            textureVideoImpl.init(placeholderView, videoUri, null);
             addView(textureVideoImpl);
             return textureVideoImpl;
         } else{
             implType = ImplType.VIDEO_VIEW;
             final VideoViewImpl videoViewImpl = new VideoViewImpl(context, attrs);
-            videoViewImpl.init(placeholderView, videoUri);
+            videoViewImpl.init(placeholderView, videoUri, null);
             addView(videoViewImpl);
             return videoViewImpl;
         }
@@ -74,13 +76,18 @@ public class FrameVideoView extends FrameLayout {
 
     public void setup(Uri videoUri) {
         this.videoUri = videoUri;
-        impl.init(placeholderView, videoUri);
+        impl.init(placeholderView, videoUri, null);
+    }
+
+    public void setup(Uri videoUri, Map<String, String> headers) {
+        this.videoUri = videoUri;
+        impl.init(placeholderView, videoUri, headers);
     }
     
     public void setup(Uri videoUri, int placeholderBackgroundColor) {
         this.videoUri = videoUri;
         placeholderView.setBackgroundColor(placeholderBackgroundColor);
-        impl.init(placeholderView, videoUri);
+        impl.init(placeholderView, videoUri, null);
     }
 
     @SuppressLint("NewApi")
@@ -131,13 +138,13 @@ public class FrameVideoView extends FrameLayout {
         switch (implType){
             case TEXTURE_VIEW:
                 final TextureViewImpl textureViewImpl = new TextureViewImpl(context);
-                textureViewImpl.init(placeholderView, videoUri);
+                textureViewImpl.init(placeholderView, videoUri, null);
                 addView(textureViewImpl);
                 impl = textureViewImpl;
                 break;
             case VIDEO_VIEW:
                 VideoViewImpl videoViewImpl = new VideoViewImpl(context);
-                videoViewImpl.init(placeholderView, videoUri);
+                videoViewImpl.init(placeholderView, videoUri, null);
                 addView(videoViewImpl);
                 impl = videoViewImpl;
                 break;
